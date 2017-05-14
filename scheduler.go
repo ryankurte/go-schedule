@@ -12,7 +12,7 @@ type Scheduler struct {
 	storer   Storer
 	tickRate time.Duration
 	lastTick time.Time
-	out      chan Event
+	Out      chan Event
 }
 
 const (
@@ -24,7 +24,7 @@ func NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration) *S
 		storer:   storer,
 		tickRate: tickRate,
 		lastTick: startTime,
-		out:      make(chan Event, EventBufferSize),
+		Out:      make(chan Event, EventBufferSize),
 	}
 }
 
@@ -76,7 +76,7 @@ func (s *Scheduler) evaluate(now time.Time, event Event) (Event, bool) {
 	}
 
 	// Emit event
-	s.out <- event
+	s.Out <- event
 
 	// Update run information
 	thisRun := event.GetWhen()

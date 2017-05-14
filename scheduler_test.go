@@ -98,7 +98,7 @@ func TestScheduler(t *testing.T) {
 		select {
 		case <-time.After(time.Second):
 			t.Errorf("Timeout waiting for channel")
-		case e := <-scheduler.out:
+		case e := <-scheduler.Out:
 			assert.EqualValues(t, event.GetID(), e.GetID())
 		}
 
