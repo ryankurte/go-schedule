@@ -16,9 +16,14 @@ type Scheduler struct {
 }
 
 const (
+	// EventBufferSize is the size of the output event buffer
 	EventBufferSize = 1024
 )
 
+// NewScheduler creates a scheduler instance using the provided Storer
+// startTime is used to filter previous events (ie. startTime of 0 will run and update any pending / not executed events)
+// TODO: this will explode / run things as many times as they are scheduled in the past, not sure how to approach this.
+// tickRate defines the update rate of the scheduler
 func NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration) *Scheduler {
 	return &Scheduler{
 		storer:   storer,
@@ -28,12 +33,15 @@ func NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration) *S
 	}
 }
 
+// Schedule creates a scheduled event and saves it to the storer
 func (s *Scheduler) Schedule(name, description string, when time.Time, repeat repeat.Repeat) (Event, error) {
 	event, err := s.storer.AddEvent(name, description, when, when, repeat)
 	return event, err
 }
 
-func (s *Scheduler) run() {
+// Run evaluates scheduled tasks every tick
+// This should be run as a goroutine
+func (s *Scheduler) Run() {
 	for {
 		select {
 		case <-time.After(s.tickRate):

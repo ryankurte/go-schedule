@@ -11,9 +11,29 @@ This is designed to allow user or application scheduling of events (one off or a
 
 ## Usage
 
-TODO
 
+### Creating the scheduler
+```go
+    s := NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration)
+    go s.Run()
+```
 
+### Adding an event
+```go
+e, err := s.Schedule(baseEvent.Name, baseEvent.Description, baseEvent.When, baseEvent.Repeat)
+```
+
+### Subscribing to events
+```go
+select {
+    case e, ok := s.Out:
+    if !ok {
+        // Scheduler exited / channel closed
+    }
+    // Do things with event instance
+}
+
+```
 ---
 
 If you have any questions, comments, or suggestions, feel free to open an issue or a pull request.
