@@ -14,13 +14,13 @@ This is designed to allow user or application scheduling of events (one off or a
 
 ### Creating the scheduler
 ```go
-    s := NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration)
-    go s.Run()
+s := NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration)
+go s.Run()
 ```
 
 ### Adding an event
 ```go
-e, err := s.Schedule(baseEvent.Name, baseEvent.Description, baseEvent.When, baseEvent.Repeat)
+e, err := s.Schedule(name, description string, when time.Time, repeat repeat.Repeat)
 ```
 
 ### Subscribing to events
