@@ -3,6 +3,8 @@ package scheduler
 import (
 	"log"
 	"time"
+
+	"github.com/ryankurte/go-schedule/repeat"
 )
 
 // Scheduler implements schedule based events
@@ -26,7 +28,7 @@ func NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration) *S
 	}
 }
 
-func (s *Scheduler) Schedule(name, description string, when time.Time, repeat Repeat) (Event, error) {
+func (s *Scheduler) Schedule(name, description string, when time.Time, repeat repeat.Repeat) (Event, error) {
 	event, err := s.storer.AddEvent(name, description, when, when, repeat)
 	return event, err
 }
@@ -69,7 +71,7 @@ func (s *Scheduler) evaluate(now time.Time, event Event) (Event, bool) {
 
 	// Skip if we are too early
 	// ie. not yet scheduled, repeated event but not yet rescheduled
-	if event.GetWhen().After(now) || (event.GetRepeat() != RepeatNever && event.GetNextExecution().After(now)) {
+	if event.GetWhen().After(now) || (event.GetRepeat() != repeat.Never && event.GetNextExecution().After(now)) {
 		return event, false
 	}
 
@@ -83,11 +85,11 @@ func (s *Scheduler) evaluate(now time.Time, event Event) (Event, bool) {
 	}
 
 	event.SetLastExecution(thisRun)
-	if event.GetRepeat() == RepeatNever {
+	if event.GetRepeat() == repeat.Never {
 		event.SetCompleted(true)
 	}
 
-	next, err := Reschedule(thisRun, event.GetRepeat())
+	next, err := repeat.Reschedule(thisRun, event.GetRepeat())
 	if err != nil {
 		log.Printf("[SCHEDULER] error rescheduling: %s", err)
 		return event, false

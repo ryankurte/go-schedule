@@ -1,4 +1,4 @@
-package scheduler
+package repeat
 
 import (
 	"testing"
@@ -11,52 +11,52 @@ func TestRepeat(t *testing.T) {
 	now := time.Now()
 
 	t.Run("Never returns current time", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatNever)
+		next, err := Reschedule(now, Never)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now, next)
 	})
 
 	t.Run("Reschedules daily", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatDaily)
+		next, err := Reschedule(now, Daily)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(0, 0, 1), next)
 	})
 
 	t.Run("Reschedules weekly", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatWeekly)
+		next, err := Reschedule(now, Weekly)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(0, 0, 7), next)
 	})
 
 	t.Run("Reschedules biweekly", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatBiweekly)
+		next, err := Reschedule(now, Biweekly)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(0, 0, 14), next)
 
 	})
 
 	t.Run("Reschedules monthly", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatMonthly)
+		next, err := Reschedule(now, Monthly)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(0, 1, 0), next)
 
 	})
 
 	t.Run("Reschedules bimonthly", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatBimonthly)
+		next, err := Reschedule(now, Bimonthly)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(0, 2, 0), next)
 
 	})
 
 	t.Run("Reschedules quarterly", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatQuarterly)
+		next, err := Reschedule(now, Quarterly)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(0, 3, 0), next)
 	})
 
 	t.Run("Reschedules yearly", func(t *testing.T) {
-		next, err := Reschedule(now, RepeatYearly)
+		next, err := Reschedule(now, Yearly)
 		assert.Nil(t, err)
 		assert.EqualValues(t, now.AddDate(1, 0, 0), next)
 	})

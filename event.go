@@ -2,6 +2,8 @@ package scheduler
 
 import (
 	"time"
+
+	"github.com/ryankurte/go-schedule/repeat"
 )
 
 // Event defines the interface that must be implemented by schedulable objects
@@ -13,7 +15,7 @@ type Event interface {
 	IsCompleted() bool
 	SetCompleted(bool)
 	GetWhen() time.Time
-	GetRepeat() Repeat
+	GetRepeat() repeat.Repeat
 	GetLastExecution() time.Time
 	SetLastExecution(time.Time)
 	GetNextExecution() time.Time

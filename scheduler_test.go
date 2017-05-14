@@ -7,14 +7,17 @@ import (
 	"fmt"
 	"github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ryankurte/go-schedule/helpers"
+	"github.com/ryankurte/go-schedule/repeat"
 )
 
 type MockStorer struct {
-	Events []*DefaultEvent
+	Events []*helpers.DefaultEvent
 }
 
-func (ms *MockStorer) AddEvent(name, description string, when, next time.Time, repeat Repeat) (Event, error) {
-	event := DefaultEvent{
+func (ms *MockStorer) AddEvent(name, description string, when, next time.Time, repeat repeat.Repeat) (Event, error) {
+	event := helpers.DefaultEvent{
 		ID:          uuid.NewV4().String(),
 		Name:        name,
 		Description: description,
@@ -40,7 +43,7 @@ func (ms *MockStorer) GetEvent(id string) (Event, error) {
 func (ms *MockStorer) UpdateEvent(event Event) (Event, error) {
 	for i, e := range ms.Events {
 		if e.GetID() == event.GetID() {
-			ms.Events[i] = event.(*DefaultEvent)
+			ms.Events[i] = event.(*helpers.DefaultEvent)
 			return event, nil
 		}
 	}
@@ -61,15 +64,15 @@ func (ms *MockStorer) GetEventsFiltered(start, end time.Time, getCompleted bool)
 func TestScheduler(t *testing.T) {
 	now := time.Now()
 
-	baseEvent := DefaultEvent{
+	baseEvent := helpers.DefaultEvent{
 		Name:        "Test Event",
 		Description: "Test Description",
 		When:        now,
-		Repeat:      RepeatNever,
+		Repeat:      repeat.Never,
 		Enabled:     true,
 	}
 
-	storer := MockStorer{Events: make([]*DefaultEvent, 0)}
+	storer := MockStorer{Events: make([]*helpers.DefaultEvent, 0)}
 	scheduler := NewScheduler(&storer, now, time.Second)
 
 	var event Event
@@ -111,7 +114,7 @@ func TestScheduler(t *testing.T) {
 
 	t.Run("RepeatDaily events are executed daily", func(t *testing.T) {
 		dailyEvent := baseEvent
-		dailyEvent.Repeat = RepeatDaily
+		dailyEvent.Repeat = repeat.Daily
 		dailyEvent.When = dailyEvent.When.AddDate(0, 0, 1)
 
 		// Should not run immediately
