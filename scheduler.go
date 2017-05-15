@@ -34,8 +34,8 @@ func NewScheduler(storer Storer, startTime time.Time, tickRate time.Duration) *S
 }
 
 // Schedule creates a scheduled event and saves it to the storer
-func (s *Scheduler) Schedule(name, description string, when time.Time, repeat repeat.Repeat) (Event, error) {
-	event, err := s.storer.AddEvent(name, description, when, when, repeat)
+func (s *Scheduler) Schedule(name, description string, when, end time.Time, repeat repeat.Repeat) (Event, error) {
+	event, err := s.storer.AddEvent(name, description, when, end, when, repeat)
 	return event, err
 }
 

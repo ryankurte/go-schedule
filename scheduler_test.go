@@ -16,7 +16,7 @@ type MockStorer struct {
 	Events []*helpers.DefaultEvent
 }
 
-func (ms *MockStorer) AddEvent(name, description string, when, next time.Time, repeat repeat.Repeat) (Event, error) {
+func (ms *MockStorer) AddEvent(name, description string, when, end, next time.Time, repeat repeat.Repeat) (Event, error) {
 	event := helpers.DefaultEvent{
 		ID:          uuid.NewV4().String(),
 		Name:        name,
@@ -24,6 +24,7 @@ func (ms *MockStorer) AddEvent(name, description string, when, next time.Time, r
 		Enabled:     true,
 		Completed:   false,
 		When:        when,
+		End:         end,
 		NextRun:     next,
 		Repeat:      repeat,
 	}
@@ -78,7 +79,7 @@ func TestScheduler(t *testing.T) {
 	var event Event
 
 	t.Run("Adds events", func(t *testing.T) {
-		e, err := scheduler.Schedule(baseEvent.Name, baseEvent.Description, baseEvent.When, baseEvent.Repeat)
+		e, err := scheduler.Schedule(baseEvent.Name, baseEvent.Description, baseEvent.When, time.Time{}, baseEvent.Repeat)
 		assert.Nil(t, err)
 		assert.NotNil(t, e)
 		event = e

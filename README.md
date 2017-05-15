@@ -24,7 +24,7 @@ go s.Run()
 
 ### Adding an event
 ```go
-e, err := s.Schedule(name, description string, when time.Time, repeat repeat.Repeat)
+e, err := s.Schedule(name, description string, when, end time.Time, repeat repeat.Repeat)
 ```
 
 ### Subscribing to events
