@@ -15,6 +15,7 @@ type Event interface {
 	IsCompleted() bool
 	SetCompleted(bool)
 	GetWhen() time.Time
+	GetEnd() time.Time
 	GetRepeat() repeat.Repeat
 	GetLastExecution() time.Time
 	SetLastExecution(time.Time)

@@ -72,6 +72,8 @@ func (s *Scheduler) tick(now time.Time) {
 }
 
 func (s *Scheduler) evaluate(now time.Time, event Event) (Event, bool) {
+	//log.Printf("Event: %+v", event)
+
 	// Skip if event is completed or not enabled
 	if event.IsCompleted() || !event.IsEnabled() {
 		return event, false
@@ -80,6 +82,12 @@ func (s *Scheduler) evaluate(now time.Time, event Event) (Event, bool) {
 	// Skip if we are too early
 	// ie. not yet scheduled, repeated event but not yet rescheduled
 	if event.GetWhen().After(now) || (event.GetRepeat() != repeat.Never && event.GetNextExecution().After(now)) {
+		return event, false
+	}
+
+	// Skip if after end time
+	if !event.GetEnd().IsZero() && now.After(event.GetEnd()) {
+		event.SetCompleted(true)
 		return event, false
 	}
 
@@ -92,11 +100,13 @@ func (s *Scheduler) evaluate(now time.Time, event Event) (Event, bool) {
 		thisRun = event.GetNextExecution()
 	}
 
+	// Update last execution and completed if never repeated
 	event.SetLastExecution(thisRun)
 	if event.GetRepeat() == repeat.Never {
 		event.SetCompleted(true)
 	}
 
+	// Otherwise, reschedule
 	next, err := repeat.Reschedule(thisRun, event.GetRepeat())
 	if err != nil {
 		log.Printf("[SCHEDULER] error rescheduling: %s", err)

@@ -141,7 +141,28 @@ func TestScheduler(t *testing.T) {
 		e, done = scheduler.evaluate(now.AddDate(0, 0, 2).Add(time.Second), e)
 		assert.False(t, done)
 		assert.NotNil(t, e)
+	})
 
+	t.Run("Events are not executed after their end date", func(t *testing.T) {
+		dailyEvent := baseEvent
+		dailyEvent.Repeat = repeat.Daily
+		dailyEvent.When = dailyEvent.When.AddDate(0, 0, 1)
+		dailyEvent.End = dailyEvent.When.AddDate(0, 0, 1)
+
+		// Should run on the first day
+		e, done := scheduler.evaluate(now.AddDate(0, 0, 1), &dailyEvent)
+		assert.True(t, done)
+		assert.NotNil(t, e)
+
+		// And ends on the second
+		e, done = scheduler.evaluate(now.AddDate(0, 0, 2), &dailyEvent)
+		assert.True(t, done)
+		assert.NotNil(t, e)
+
+		// then does not run again
+		e, done = scheduler.evaluate(now.AddDate(0, 0, 3), &dailyEvent)
+		assert.False(t, done)
+		assert.NotNil(t, e)
 	})
 
 }
